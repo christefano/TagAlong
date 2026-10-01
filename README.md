@@ -1,4 +1,4 @@
-w# TagAlong
+# TagAlong
 
 *TagAlong* is a Kanboard plugin that supercharges email handling. It groups every email for a task into one thread, points Reply-To to the reply-by-email address, and allows Kanboard admins to customize the email subject format.
 
