@@ -3,7 +3,7 @@
 namespace Kanboard\Plugin\TagAlong;
 
 /**
- * Subject formats from Settings, Email settings. An empty format keeps the subject Kanboard or
+ * Email subject formats from Settings -> Email settings -> TagAlong. An empty format keeps the subject Kanboard or
  * NotifyMe built, so an install that never saves the settings sees no change.
  */
 class Subject
