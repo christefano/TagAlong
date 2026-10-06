@@ -7,6 +7,13 @@ It can also filter autoreplies (like out-of-office messages), email signatures, 
 If [Mailmagik](https://github.com/creecros/Mailmagik) is installed, *TagAlong* appends "`[CommentOnTask#12345]`" to the subject of outgoing task and comment notification emails (e.g. `Test #12345: New comment [CommentOnTask#12345]`), so an email reply from a project member becomes a comment on a task.
 
 
+## Screenshot
+
+*Settings -> Email settings -> TagAlong* sets the email subject formats and the incoming mail filters.
+
+![TagAlong section of Kanboard's Email settings page](screenshots/settings-email-tagalong-subject-formats-and-incoming-mail-filters.jpg)
+
+
 ## Quick start
 
 1. Copy the `TagAlong` folder into Kanboard's `plugins/` directory.

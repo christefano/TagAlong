@@ -1,5 +1,9 @@
 # Changelog
 
+## v1.1.1
+
+Adding screenshots. No new functionality or bug fixes.
+
 ## v1.1.0
 
 - Added email subject formats for Kanboard's and NotifyMe's emails in *Settings -> Email settings -> TagAlong*, with `{project}`, `{task_id}`, `{task_title}`, `{event}`, and `{title}`. An empty format keeps the default subject, and the reply token always ends the subject
