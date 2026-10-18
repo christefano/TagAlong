@@ -1,11 +1,17 @@
 <fieldset>
     <legend>TagAlong</legend>
 
+    <?php if (! \Kanboard\Plugin\TagAlong\Token::mailmagikInstalled()): ?>
+        <p class="alert alert-info"><?= t('These settings take effect once Mailmagik is installed.') ?></p>
+    <?php endif ?>
+
     <?= $this->form->label(t('Subject of task notifications'), 'tagalong_subject_format') ?>
     <?= $this->form->text('tagalong_subject_format', $values, $errors, array('placeholder="'.$this->text->e(\Kanboard\Plugin\TagAlong\Subject::KANBOARD_DEFAULT).'"')) ?>
 
-    <?= $this->form->label(t('Subject of NotifyMe notifications'), 'tagalong_notifyme_subject_format') ?>
-    <?= $this->form->text('tagalong_notifyme_subject_format', $values, $errors, array('placeholder="'.$this->text->e(\Kanboard\Plugin\TagAlong\Subject::NOTIFYME_DEFAULT).'"')) ?>
+    <?php if (class_exists('\\Kanboard\\Plugin\\NotifyMe\\Plugin')): ?>
+        <?= $this->form->label(t('Subject of NotifyMe notifications'), 'tagalong_notifyme_subject_format') ?>
+        <?= $this->form->text('tagalong_notifyme_subject_format', $values, $errors, array('placeholder="'.$this->text->e(\Kanboard\Plugin\TagAlong\Subject::NOTIFYME_DEFAULT).'"')) ?>
+    <?php endif ?>
 
     <p class="form-help"><?= t('Placeholders: {project}, {task_id}, {task_title}, {event} (short), {title} (full). The reply token always ends the subject. Empty keeps the default.') ?></p>
 

@@ -3,7 +3,7 @@
 ## Requirements
 
 - Kanboard 1.2.20 or later.
-- If [Mailmagik](https://github.com/creecros/Mailmagik) is installed:
+- [Mailmagik](https://github.com/creecros/Mailmagik). TagAlong's settings show without it, but nothing they set takes effect until it is installed. Then:
     - Set Mailmagik to "Parse from the SUBJECT field" (*not* "TO" mode).
     - The "Automatically Convert Emails to Comments" action (`ConvertEmailToComment`) on each project that should accept email replies.
     - Kanboard's sender address set to the mailbox Mailmagik reads. See the README's Reply-To handling section.

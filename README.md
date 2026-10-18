@@ -1,13 +1,13 @@
 # TagAlong
 
-*TagAlong* is a Kanboard plugin that supercharges email handling. It groups every email for a task into one thread, points Reply-To to the reply-by-email address, and lets admins customize the email subject format.
+*TagAlong* is a Kanboard plugin that supercharges email handling and groups every email for a task into one thread, points Reply-To to the reply-by-email address, and lets admins customize the email subject format.
 
-It can also filter autoreplies (like out-of-office messages), email signatures, and quoted text out of incoming emails.
+It can also filter out autoreplies (like out-of-office messages), email signatures and quoted text from incoming emails.
 
-If [Mailmagik](https://github.com/creecros/Mailmagik) is installed, *TagAlong* appends "`[CommentOnTask#12345]`" to the subject of outgoing task and comment notification emails (e.g. `Test #12345: New comment [CommentOnTask#12345]`), so an email reply from a project member becomes a comment on a task.
+*TagAlong* requires [Mailmagik](https://github.com/creecros/Mailmagik). When installed together, "`[CommentOnTask#12345]`" is appended to the subject of outgoing task and comment notification emails (e.g. `[Test] New comment on task #12345 [CommentOnTask#12345]`), so an email reply from a project member becomes a comment on a task.
 
 
-## Screenshot
+## Screenshots
 
 *Settings -> Email settings -> TagAlong* sets the email subject formats and the incoming mail filters.
 
@@ -18,7 +18,7 @@ If [Mailmagik](https://github.com/creecros/Mailmagik) is installed, *TagAlong* a
 
 1. Copy the `TagAlong` folder into Kanboard's `plugins/` directory.
 2. Customize the email subject formats and filters in *Settings -> Email settings -> TagAlong* (options include Remove signatures from emailed comments, Remove quoted text from emailed comments, and Ignore automatic replies and email from the Mailmagik mailbox).
-3. TagAlong works without Mailmagik, but if Mailmagik *is* installed:
+3. TagAlong needs Mailmagik, so install it and then:
     - Configure Mailmagik at *Settings -> Email settings -> Task- and Comment-Creation* and select "Parse from the SUBJECT field"*
     - On each project that should accept replies, go to *Configure this project -> Automatic actions* and add Mailmagik's "Automatically Convert Emails to Comments" action with "Trigger Mailmagik's mail fetching".
     - In Kanboard's *Settings -> Email settings* set the sender email to the mailbox that Mailmagik uses, and replies will turn into task comments (see Reply-To handling).
@@ -30,7 +30,7 @@ If [Mailmagik](https://github.com/creecros/Mailmagik) is installed, *TagAlong* a
 
 ## Email subject formats
 
-*TagAlong* adds two settings in *Settings -> Email settings*: one configures Kanboard's task notifications, and the other configures [NotifyMe](https://github.com/christefano/NotifyMe) emails. An empty field keeps the default email subject.
+*TagAlong* adds a setting in *Settings -> Email settings* for Kanboard's task notifications, and a second one for [NotifyMe](https://github.com/christefano/NotifyMe) emails that shows only when NotifyMe is installed. An empty field keeps the default email subject.
 
 | Placeholder | Value |
 |---|---|
@@ -38,11 +38,11 @@ If [Mailmagik](https://github.com/creecros/Mailmagik) is installed, *TagAlong* a
 | `{task_id}` | Task number |
 | `{task_title}` | Task title |
 | `{event}` | Short label such as "New comment" or the full title for an event with no label |
-| `{title}` | Kanboard's full title, such as "New comment on task #12345" |
+| `{title}` | Kanboard's full title, such as "New comment on task #12345". In NotifyMe emails it is the event's label, such as "New comment" |
 
-Kanboard's default is `[{project}] {title}` and NotifyMe's is `[{project}] {task_title} (#{task_id})`. The reply token is always appended to the subject no matter what the format says.
+Kanboard's default is `[{project}] {title}`. NotifyMe emails use `{project}: {task_title} (#{task_id}) {event}` until you save the setting, and saving it empty keeps NotifyMe's own `[{project}] {task_title} (#{task_id})`. The reply token is always appended to the subject no matter what the format says.
 
-Each emailed comment starts with the subject line, for example `Re: Test #12345: New comment` since Mailmagik makes the subject the comment's first line.
+Each emailed comment starts with the subject line, for example `Re: [Test] New comment on task #12345` since Mailmagik makes the subject the comment's first line.
 
 
 ## Email threads
@@ -99,7 +99,7 @@ The transport copies duplicate core 1.2.54's `sendEmail()`. Recheck them after a
 
 ## Limitations
 
-- If Mailmagik is installed, Mailmagik really needs to be in "SUBJECT" mode. In "TO" mode, email threads and email tokens aren't very useful because replies to the Kanboard sender address just stay unread in the Mailmagik mailbox. The filters will work in either mode, but "TO" mode also risks adding countless new email addresses to the address books in Kanboard users' email clients (one address book entry per project task ID per person).
+- Mailmagik really needs to be in "SUBJECT" mode. In "TO" mode, email threads and email tokens aren't very useful because replies to the Kanboard sender address just stay unread in the Mailmagik mailbox. The filters will work in either mode, but "TO" mode also risks adding countless new email addresses to the address books in Kanboard users' email clients (one address book entry per project task ID per person).
 - TagAlong adds the reply token to the end of the subject. If the subject already contains `CommentOnTask#ID` (because, for example, it's in a task title), TagAlong changes it to `CommentOnTask #` first. This prevents a title from sending email replies to a different task.
 - Anything after the last matching filter line that's in the last 10 lines of an email gets filtered and removed (e.g. a P.S. under "Sent from my iPhone").
 - With the autoreply filter on, email from Kanboard's sender address, Mailmagik's address, or Mailmagik's login is discarded. If one of these is a person's own address, their replies are dropped, too, so use a dedicated mailbox.
@@ -108,19 +108,22 @@ The transport copies duplicate core 1.2.54's `sendEmail()`. Recheck them after a
 - Mailmagik 1.6.1 has a one-character bug that allows any Kanboard user to add a comment to any task in any project, so chime in on [Mailmagik issue 55](https://github.com/creecros/Mailmagik/issues/55) to help get it fixed.
 
 
-## Other plugins
-
-TagAlong works with several other plugins by the same author:
-
-- [NotKanboard](https://github.com/christefano/NotKanboard) helps whitelabel Kanboard and replaces "Kanboard" in page titles, outgoing emails, and a few other places with your own product name.
-- [NotifyMe](https://github.com/christefano/NotifyMe) emails you about your own actions in a project, adds a vacation mode, notifies users of failed login attempts, and gives admins control of how many notifications are shown in the Notifications menu. Its footer uses NotKanboard's name when both are installed.
-
-
 ## Compatibility
 
 - Kanboard >= 1.2.20
 - Mailmagik 1.6.1
 - No database changes
+
+
+## Other plugins
+
+TagAlong works by itself and plays nicely with several other plugins by the same author:
+
+- [BusyBee](https://github.com/christefano/BusyBee) adds one-click questions about your projects and tasks, such as "What is late?" and "What is blocked?", to the top of Kanboard's *My* dashboard pages. If SortaFolders is installed, the same questions also show at the top of its *My folders* page.
+- [CommentTater](https://github.com/christefano/CommentTater) lets you update a task's fields while posting a comment. Changes made to the task from the comment are shown on the posted comment and are included in Kanboard email notifications, too.
+- [NotifyMe](https://github.com/christefano/NotifyMe) emails you about your own actions in a project, adds a vacation mode, notifies users of failed login attempts, and gives admins control of how many notifications are shown in the Notifications menu. Its email footer uses NotKanboard's name when both are installed.
+- [NotKanboard](https://github.com/christefano/NotKanboard) helps whitelabel Kanboard and replaces "Kanboard" in page titles, outgoing emails, and a few other places with your own product name.
+- [SortaFolders](https://github.com/christefano/SortaFolders) sorts projects into folders. Kanboard doesn't let you group projects together or classify a project by putting it in another project, so *SortaFolders* adds nestable folders up to 5 levels deep and a dedicated *My folders* page on your dashboard that lists your projects by folder.
 
 
 ## License

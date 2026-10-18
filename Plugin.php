@@ -26,7 +26,7 @@ class Plugin extends Base
                 return;
             }
 
-            $format = Subject::format($this->configModel, Subject::NOTIFYME_KEY);
+            $format = Subject::format($this->configModel, Subject::NOTIFYME_KEY, Subject::NOTIFYME_DEFAULT);
 
             if ($format !== '') {
                 $action = isset($data['action']) && is_string($data['action']) ? t($data['action']) : '';

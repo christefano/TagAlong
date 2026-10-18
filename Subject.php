@@ -17,8 +17,8 @@ class Subject
     /** Kanboard's own subject, written as a format. Shown as the field's placeholder. */
     const KANBOARD_DEFAULT = '[{project}] {title}';
 
-    /** NotifyMe's own subject, written as a format. Shown as the field's placeholder. */
-    const NOTIFYME_DEFAULT = '[{project}] {task_title} (#{task_id})';
+    /** Format for NotifyMe's emails until the setting is saved. Shown as the field's placeholder. */
+    const NOTIFYME_DEFAULT = '{project}: {task_title} (#{task_id}) {event}';
 
     /**
      * Short labels for {event}. The English text is the translation key, so a language with no
@@ -48,10 +48,13 @@ class Subject
         'task_internal_link.delete'        => 'Internal link removed',
     );
 
-    /** Saved format for a setting key, with line breaks removed, or '' when none is saved. */
-    public static function format($configModel, $key)
+    /**
+     * Saved format for a setting key, with line breaks removed. $default applies only when the
+     * setting was never saved, so a saved empty field still keeps the subject the other plugin built.
+     */
+    public static function format($configModel, $key, $default = '')
     {
-        $format = $configModel->get($key, '');
+        $format = $configModel->get($key, $default);
 
         return is_string($format) ? trim(str_replace(array("\r", "\n"), ' ', $format)) : '';
     }
