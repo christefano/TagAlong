@@ -100,7 +100,7 @@ class LineListFilter
         return trim(preg_replace('/\s+/', ' ', $line));
     }
 
-    private static function matches(string $line, array $rules): bool
+    public static function matches(string $line, array $rules): bool
     {
         if ($line === '') {
             return false;

@@ -56,6 +56,28 @@ TagAlong copies Kanboard's three email transports (smtp, sendmail, and mail) and
 
 Everything below removes text from incoming email before Mailmagik saves it, and the removed text isn't kept anywhere in Kanboard. The original email stays in the mailbox (either marked as read or deleted if Mailmagik is set to delete processed email).
 
+### Reply-above line (recommended)
+
+Set a *Reply-above line* in *Settings -> Email settings -> TagAlong*, e.g.: `--Reply above this line--`
+
+TagAlong then:
+
+1. Puts that line at the top of every task email that can be replied to.
+2. Trims an emailed comment from that line on, wherever it is in the email, together with the "On ... wrote:" line or Outlook `From:` / `Sent:` block the mail client put just above it.
+
+This line works regardless of mail client's quote format, including for replies with quotes that don't have `>` marks, which the quoted-text filter below leaves alone.
+
+- Empty (the default) turns both sides off.
+- The match ignores `>` quote marks, formatting, case, repeated spaces, and dash changes, so a client that turns `--` into a dash or quotes the line with `>` still matches.
+- If the line is the first thing in the email, because the reply was typed below the quote, nothing is trimmed.
+- Replies to emails sent before the line was set, and clients that drop it, are handled by the filters below.
+- *Trim incoming comments after these lines* adds more lines, one per line: plain text matches a whole line ignoring case, and `/pattern/` is a regular expression. The first match and everything after it is removed.
+- Only emailed comments are trimmed, not the bodies of new tasks.
+
+The filters in this section run in this order: reply-above line, quoted text, `--` signatures, then the signature list.
+
+### Other filters
+
 There are three checkboxes in *Settings -> Email settings*, and all off by default:
 
 1. Ignore automatic replies and email from the Mailmagik mailbox. Mail with `Auto-Submitted` (anything but `no`), `X-Auto-Response-Suppress: OOF` or `All`, or `Precedence: bulk`, `auto_reply`, or `junk` is marked as read and never becomes a task or comment. So is email sent from Mailmagik's own address, its login, or Kanboard's sender address.
@@ -68,7 +90,7 @@ TagAlong can also filter out email signatures (like the scourge that is "Sent fr
 - List only the first line of an email signature. Formatting is ignored when matching: bold, italics, and link markup are removed from a line, too.
 - Plain text matches a whole line exactly (ignoring case), and `/pattern/` is a regular expression tested against each line.
 - TagAlong includes a few common lines from phone email clients and Outlook.
-- The filters run in order: quoted text, then `--` email signatures, then the list.
+- The filters run in order: reply-above line, quoted text, then `--` email signatures, then the list.
 - An invalid pattern is skipped and logged.
 - Inline images aren't embedded. Mailmagik's task attribute parsing reads that text in place of the plaintext part.
 

@@ -41,7 +41,7 @@ trait ThreadHeaders
                 $message->setReplyTo($authorEmail);
             }
 
-            $message->setBody($html, 'text/html');
+            $message->setBody($taskId > 0 ? Token::withReplyMarker($html, $this->configModel->get('tagalong_reply_marker', '')) : $html, 'text/html');
 
             \Swift_Mailer::newInstance($this->getTransport())->send($message);
         } catch (\Swift_TransportException $e) {

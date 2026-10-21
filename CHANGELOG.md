@@ -1,13 +1,17 @@
 # Changelog
 
-## Unreleased
+## v1.2.0
+
+- Tested with Kanboard 1.2.55.
+- Added *Trim incoming comments after these lines*, a list of more lines to trim at (plain text or `/pattern/`), anywhere in the email.
+- Added a *Reply-above line* setting, [just like Redmine's](https://www.redmine.org/projects/redmine/wiki/redminereceivingemails#Truncate-emails). TagAlong puts the line at the top of task emails that can be replied to and trims an emailed comment from that line on, including the "On ... wrote:" or Outlook header block above it. This removes quoted notifications that the quoted-text filter keeps because the quote has no `>` marks. The match ignores `>` marks, formatting, case, spaces and dash changes. Off until a line is set.
+
+## v1.1.1
 
 - The "Subject of NotifyMe notifications" setting shows up only when NotifyMe is installed.
 - README and INSTALL.md now explicitly say Mailmagik is required. Without Mailmagik, the TagAlong settings show a "These settings take effect once Mailmagik is installed." message.
 - NotifyMe by default now uses the subject format `{project}: {task_title} (#{task_id}) {event}` until the "Subject of NotifyMe notifications" setting is saved, e.g. `Test: test 5 (#130) Moved to another column [CommentOnTask#130]`. An already saved setting will be respected.
 - Added screenshots.
-
-## v1.1.1
 
 ## v1.1.0
 

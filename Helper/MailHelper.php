@@ -7,6 +7,7 @@ use Kanboard\Plugin\TagAlong\Filter\AutoReplyFilter;
 use Kanboard\Plugin\TagAlong\Filter\LineListFilter;
 use Kanboard\Plugin\TagAlong\Filter\QuotedTextFilter;
 use Kanboard\Plugin\TagAlong\Filter\SignatureFilter;
+use Kanboard\Plugin\TagAlong\Filter\TrimFilter;
 
 /**
  * Mailmagik's mail helper with filters on incoming mail, set in Settings, Email settings. The three
@@ -93,14 +94,32 @@ class MailHelper extends MailmagikMailHelper
         return $this->lineRules = $rules;
     }
 
+    /** Rules from the Reply-above line and the trim list. Not cached: the marker is one setting read. */
+    private function trimRules()
+    {
+        $options = $this->configModel->getAll();
+
+        list($rules, $invalid) = TrimFilter::parse(
+            isset($options['tagalong_reply_marker']) ? (string) $options['tagalong_reply_marker'] : '',
+            isset($options['tagalong_trim_lines']) ? (string) $options['tagalong_trim_lines'] : ''
+        );
+
+        foreach ($invalid as $entry) {
+            $this->logger->error('TagAlong: skipped invalid trim pattern '.$entry);
+        }
+
+        return $rules;
+    }
+
     private function cleanBody($email, $isComment)
     {
-        // Quoted text and signatures are cut from comments only. The line list covers comments and new tasks.
+        // Trimming, quoted text and signatures are cut from comments only. The line list covers comments and new tasks.
+        $trims = $isComment ? $this->trimRules() : array();
         $quotes = $isComment && $this->configModel->get('tagalong_strip_quoted_text', '0') == 1;
         $signatures = $isComment && $this->configModel->get('tagalong_strip_signatures', '0') == 1;
         $lines = $this->lineRules();
 
-        if ((! $quotes && ! $signatures && empty($lines)) || ! $email instanceof \PhpImap\IncomingMail) {
+        if ((empty($trims) && ! $quotes && ! $signatures && empty($lines)) || ! $email instanceof \PhpImap\IncomingMail) {
             return;
         }
 
@@ -123,6 +142,10 @@ class MailHelper extends MailmagikMailHelper
         if ($quotes && $html !== '' && isset($converter)) {
             $cleaned = $converter->convert(preg_replace('/<blockquote/i', '<br><blockquote', $html));
         }
+
+        // First, so a reply that kept the marker loses its quote whatever the client did to it.
+        // The checkboxes below still run, for replies that lost the marker.
+        $cleaned = TrimFilter::strip($cleaned, $trims);
 
         if ($quotes) {
             $cleaned = QuotedTextFilter::separateQuotes(QuotedTextFilter::strip($cleaned));

@@ -40,6 +40,30 @@ class Token
         return str_replace(self::MARKER, 'CommentOnTask #', $subject).$token;
     }
 
+    /**
+     * The Reply-above line as the first thing in the body of a task email, on a line of its own,
+     * so a reply that quotes the email keeps it above the quoted text. Unchanged when no line is set.
+     */
+    public static function withReplyMarker($html, $marker)
+    {
+        $marker = is_string($marker) ? trim($marker) : '';
+
+        if ($marker === '') {
+            return $html;
+        }
+
+        $line = '<p style="color:#888;font-size:12px;margin:0 0 16px">'.htmlspecialchars($marker, ENT_QUOTES, 'UTF-8').'</p>';
+
+        // After the opening body tag when the email has one, so the line is not left outside the page.
+        if (preg_match('/<body\b[^>]*>/i', $html, $match, PREG_OFFSET_CAPTURE)) {
+            $at = $match[0][1] + strlen($match[0][0]);
+
+            return substr($html, 0, $at).$line.substr($html, $at);
+        }
+
+        return $line.$html;
+    }
+
     /** Task id from the token at the end of a subject, or 0 when the subject has none. */
     public static function taskIdFromSubject($subject)
     {
